@@ -1,0 +1,223 @@
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
+@import url("https://fonts.cdnfonts.com/css/lcd");
+
+:root {
+  --color-sign: #18e618;
+  --color-sign-darker: hsl(120, 81%, 35%);
+  --color-sign-opacity: rgba(94, 197, 118, 0.548);
+  --color-rer: ;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f1f5fe;
+  color: white;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.calc-container {
+  position: relative;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-around;
+  height: 95vh;
+  margin: 4vh auto 1vh auto;
+  max-height: 700px;
+  max-width: 330px;
+  background-color: rgba(0, 0, 0, 1);
+  /* background-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 46%, white 50%); */
+  padding: 0.5em;
+  box-shadow: 2px 1rem 3rem 2px #4bbb7da4,
+    0px 0px 2.5px 8px rgba(0, 0, 0, 0.107);
+  border-radius: 20px;
+}
+
+button {
+  border: none;
+  /* background-color: transparent; */
+  color: inherit;
+  cursor: pointer;
+  border-top: 2px inset rgba(255, 255, 255, 0.7);
+  border-right: 2px inset rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0);
+  -webkit-tap-highlight-color: transparent;
+}
+
+#backspace {
+  align-self: flex-end;
+  border: none;
+  width: 1.5rem;
+  height: 5%;
+  position: relative;
+  right: 2%;
+  transition: color 0.25s;
+}
+
+#backspace > svg {
+  fill: rgba(255, 255, 255, 0.5);
+}
+
+#backspace:active > svg {
+  transform: translate(-10%, 0%);
+  fill: var(--color-sign-darker);
+}
+
+#version {
+  color: var(--color-sign-darker);
+  text-shadow: 2px 1px 6px blanchedalmond;
+  display: inline-block;
+  position: relative;
+  top: 2%;
+  height: 5%;
+}
+
+.calc-screen {
+  width: 95%;
+  height: 20%;
+  font-family: "Digitalism", sans-serif;
+  min-height: 100px;
+
+  position: relative;
+  margin: 0 auto;
+  border-radius: 20px;
+  box-shadow: -1px -1px 1px 1px rgba(255, 255, 255, 0.178);
+  border-top: 2px inset var(--color-sign-darker);
+  border-left: 2px solid var(--color-sign-darker);
+  padding: 2% 0;
+  overflow: hidden;
+}
+
+.calc-screen input {
+  width: 100%;
+  letter-spacing: 2px;
+  height: 40%;
+  position: absolute;
+  top: 10%;
+  text-align: right;
+  color: white;
+  font-family: inherit;
+  font-size: 2rem;
+
+  background-color: transparent;
+  border: none;
+}
+
+input :focus-visible,
+input:focus-within,
+input:focus,
+input:active {
+  outline: none;
+}
+
+.calc-screen p {
+  height: 40%;
+  width: 100%;
+  position: absolute;
+  top: 70%;
+  letter-spacing: 2px;
+  overflow: hidden;
+  font-size: 1.5rem;
+  font-family: inherit;
+  text-align: right;
+  color: hsl(0, 0%, 70%);
+  transition: all 0.4s;
+}
+
+.calc-screen p.moved {
+  font-size: 2rem;
+  top: 5%;
+  opacity: 0;
+  color: white;
+}
+
+.calc-screen input.moved {
+  color: var(--color-sign);
+}
+
+.calc-buttons {
+  display: flex;
+  flex-flow: row wrap;
+  height: 60%;
+  margin-top: 1rem;
+  padding: 1rem 0 0 0;
+  border-radius: 4%;
+  border-top: 1px inset white;
+  font-size: 2rem;
+
+  justify-content: space-between;
+  align-content: space-around;
+}
+
+.calc-button {
+  text-align: center;
+  vertical-align: middle;
+  box-shadow: inset 0px 0px 10px 1px rgba(255, 255, 255, 0.096);
+  width: 23%;
+  height: 18%;
+  font-family: "Share Tech Mono", monospace;
+  border-radius: 12%;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.1);
+  /* background-color: rgb(0, 0, 0); */
+  font-weight: bolder;
+  font-size: 65%;
+  transform: translate(0);
+  transition: border 0.2s;
+}
+
+.calc-button:active {
+  border: none;
+  border-bottom: 2px solid var(--color-sign-opacity);
+  transform: translate(0%, 5%);
+}
+
+.sign,
+.brackets {
+  color: var(--color-sign);
+}
+
+#cancel {
+  color: red;
+}
+#equals {
+  color: whitesmoke;
+  background-color: var(--color-sign);
+}
+
+#error-box {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  transform: translateX(-50%);
+  padding: 5px 0.6rem;
+  border-radius: 23px;
+  background-color: rgba(107, 106, 106, 0.856);
+  font-size: 13px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+#error-box.visible {
+  opacity: 1;
+}
+
+@media (max-height: 425px) {
+  .calc-container {
+    height: 425px;
+  }
+}
