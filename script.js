@@ -38,7 +38,7 @@ const isParenthesized = function (parentheses, literal, currVals) {
 
 //These Regular Expressions are used in this program
 const regexForZero = /([1-9.]+0*)$/;
-const regexMatchNegNum = /^-[0-9.]+$/;
+const regexMatchNegNum = /\(-[0-9.]+$|^-[0-9.]+$/;
 const regexForEndNum = /[0-9.]+$/;
 const regexForOperators = /[/*\-+]/;
 const regexForDeciNum = /([0-9]+\.{1}[0-9]*)+$/;
@@ -117,17 +117,24 @@ const equalFn = function () {
 };
 
 const showError = function (str) {
-  let newStr = str;
+  if (errorBox.textContent !== "") return;
   if (str.length > 30) {
-    newStr = `${str.slice(0, str.lastIndexOf(" "))}...`;
+    str = `${str.slice(0, str.lastIndexOf(" "))}...`;
   }
-  errorBox.textContent = newStr;
+  errorBox.textContent = str;
   errorBox.classList.add("visible");
 
-  let errTim = setTimeout(() => {
+  // Remove the pop-up after 1.2s
+  const errTim = setTimeout(() => {
     errorBox.classList.remove("visible");
     clearTimeout(errTim);
-  }, 1500);
+
+    //Reset the text after 1.8s to account for CSS transition
+    const errTxt = setTimeout(() => {
+      errorBox.textContent = "";
+      clearTimeout(errTxt);
+    }, 600);
+  }, 1200);
 };
 
 //Handle all numeric inputs from user
@@ -254,8 +261,12 @@ const handleDash = function (currVals) {
       updateValues(currVals, "(-");
       break;
 
-    case previousVal.replace(regexMatchNegNum, "") === "":
-      updateValues(currVals, previousVal.slice(1), "replace");
+    case previousVal.match(regexMatchNegNum) !== null:
+      let matched = previousVal.match(regexMatchNegNum)[0];
+      matched = matched.replace(/\(?-/, "");
+      const replacee = previousVal.replace(regexMatchNegNum, `${matched}`);
+      console.log(matched);
+      updateValues(currVals, replacee, "replace");
       break;
 
     case previousVal.match(regexForEndNum) !== null:
@@ -331,6 +342,8 @@ const collectLiterals = function (e, key, switchVal) {
     case "dash":
       screenElem.value = joinVals(handleDash(screenText, target.textContent));
       break;
+    case "equals":
+      equalFn();
     default:
       break;
   }
@@ -368,7 +381,7 @@ const handleKeyPressFn = function (e) {
       break;
 
     case keyPressed === "Enter":
-      equalFn();
+      collectLiterals(undefined, keyPressed, "equals");
       break;
     default:
       break;
@@ -408,7 +421,7 @@ function calc(expr, final = false) {
     }
     return value !== Infinity ? value : "";
   } catch (error) {
-    console.log(error.name);
+    // console.log(error.name);
     if (final && exprFilter !== "") showError(error.name);
     return "";
   }
@@ -429,5 +442,4 @@ function returnAnswer() {
 //Event Listeners used in this program
 buttonContainer.addEventListener("click", collectLiterals);
 document.addEventListener("keydown", handleKeyPressFn);
-equalButton.addEventListener("click", equalFn);
 backspaceButton.addEventListener("click", backspaceFn);
