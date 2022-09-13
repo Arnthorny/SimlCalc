@@ -17,7 +17,7 @@ const equalButton = document.getElementById("equals");
 const answerBox = document.querySelector(".calc-screen > p");
 const errorBox = document.getElementById("error-box");
 
-screenElem.focus();
+// screenElem.focus();
 //Set state variables
 let screenText = []; //This will store the current op
 let curLen = screenText.length;
@@ -405,7 +405,9 @@ function calc(expr, final = false) {
   }
 
   //Replaces any percentage symbol left
-  exprFilter = exprFilter.replaceAll("%", "/100");
+  // exprFilter = exprFilter.replaceAll("%", "/100");
+
+  exprFilter = exprFilter.replace(/%/g, "/100");
 
   //Use a try-catch block to catch any unwanted errrors
   try {
@@ -416,7 +418,7 @@ function calc(expr, final = false) {
     return (${exprFilter})
 
     `)();
-    if (final && value === Infinity) {
+    if (final && (value === Infinity || value === -Infinity)) {
       showError("Can't divide by zero.");
     }
     return value !== Infinity ? value : "";
@@ -432,12 +434,6 @@ function returnAnswer() {
   answerBox.textContent =
     returnAns !== "" ? numWithComma.format(returnAns) : "";
 }
-
-//IIFE to clear both input and answer box on page load.
-(function clearFields() {
-  screenElem.value = "";
-  answerBox.textContent = "";
-})();
 
 //Event Listeners used in this program
 buttonContainer.addEventListener("click", collectLiterals);
