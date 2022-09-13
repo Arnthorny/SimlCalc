@@ -17,7 +17,6 @@ const equalButton = document.getElementById("equals");
 const answerBox = document.querySelector(".calc-screen > p");
 const errorBox = document.getElementById("error-box");
 
-// screenElem.focus();
 //Set state variables
 let screenText = []; //This will store the current op
 let curLen = screenText.length;
@@ -93,20 +92,19 @@ const backspaceFn = function () {
 };
 
 //This clears the current screen
-cancelButton.addEventListener("click", function () {
+const cancelFn = function () {
   screenText = [];
   [screenElem.value, answerBox.textContent] = ["", ""];
-});
+};
 
 //Return answer and "move it up" to become input
 const equalFn = function () {
-  calc(screenText.join(""), true);
+  const calcVal = calc(screenText.join(""), true);
   if (answerBox.textContent === "") return;
 
   answerBox.classList.add("moved");
 
   setTimeout(() => {
-    const calcVal = calc(screenText.join(""));
     screenText = [numNoComma.format(calcVal)];
     screenElem.value = joinVals(screenText);
 
@@ -418,10 +416,11 @@ function calc(expr, final = false) {
     return (${exprFilter})
 
     `)();
-    if (final && (value === Infinity || value === -Infinity)) {
-      showError("Can't divide by zero.");
+    if (value === Infinity || value === -Infinity) {
+      if (final) showError("Can't divide by zero.");
+      return "";
     }
-    return value !== Infinity ? value : "";
+    return value;
   } catch (error) {
     // console.log(error.name);
     if (final && exprFilter !== "") showError(error.name);
@@ -435,7 +434,9 @@ function returnAnswer() {
     returnAns !== "" ? numWithComma.format(returnAns) : "";
 }
 
+screenElem.focus();
 //Event Listeners used in this program
 buttonContainer.addEventListener("click", collectLiterals);
 document.addEventListener("keydown", handleKeyPressFn);
 backspaceButton.addEventListener("click", backspaceFn);
+cancelButton.addEventListener("click", cancelFn);

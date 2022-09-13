@@ -113,12 +113,13 @@ button {
   background-color: transparent;
   border: none;
 }
-
-input :focus-visible,
-input:focus-within,
+input,
 input:focus,
-input:active {
+input:active,
+input:focus-within {
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
 }
 
 .calc-screen p {
