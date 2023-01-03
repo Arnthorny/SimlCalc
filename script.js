@@ -261,18 +261,18 @@ const handleDash = function (currVals) {
       updateValues(currVals, "(-");
       break;
 
-    case previousVal.match(regexForEndNum) !== null:
-      const matcher = previousVal.match(regexForEndNum)[0];
-      const replacer = previousVal.replace(regexForEndNum, `(-${matcher}`);
-      updateValues(currVals, replacer, "replace");
-      break;
-
     case previousVal.match(regexMatchNegNum) !== null:
       let matched = previousVal.match(regexMatchNegNum)[0];
       matched = matched.replace(/\(?-/, "");
       const replacee = previousVal.replace(regexMatchNegNum, `${matched}`);
       // console.log(matched);
       updateValues(currVals, replacee, "replace");
+      break;
+
+    case previousVal.match(regexForEndNum) !== null:
+      const matcher = previousVal.match(regexForEndNum)[0];
+      const replacer = previousVal.replace(regexForEndNum, `(-${matcher}`);
+      updateValues(currVals, replacer, "replace");
       break;
 
     case lastVal === ")" || lastVal === "%":
