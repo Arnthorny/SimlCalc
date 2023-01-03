@@ -3,7 +3,7 @@
 /* 
 This "Simple" JS Calculator App was built with design inspiration taken from the native Samsung Calculator app.
 
-The artithmetic operands are stored in an array and can either be "parenthesized" or not.. If "parenthesized", these operands are enclosed within parentheses and stored in a discrete string element, otherwise they are stored as discrete elements of the array.
+The arithmetic operands are stored in an array and can either be "parenthesized" or not.. If "parenthesized", these operands are enclosed within parentheses and stored in a discrete string element, otherwise they are stored as discrete elements of the array.
 
 The SimlCalc if you will :>
 */
@@ -18,7 +18,7 @@ const answerBox = document.querySelector(".calc-screen > p");
 const errorBox = document.getElementById("error-box");
 
 //Set state variables
-let screenText = []; //This will store the current op
+let screenText = []; //This will store the current operations
 let curLen = screenText.length;
 let previousVal = screenText[curLen - 1];
 let parenthesized = false;
@@ -58,7 +58,7 @@ const numWithComma = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 5,
 });
 
-//This function performs simple C*UD operation on the ops arr
+//This function expression performs simple C*UD operation on the ops arr
 const updateValues = function (currVals, val, option = "push") {
   const lastValue = currVals[curLen - 1];
 
@@ -171,6 +171,8 @@ const handleOperators = function (currVals, elemVal) {
   switch (true) {
     case lastVal === "(":
       break;
+    case lastVal === elemVal:
+      break;
     case lastVal === "%":
       if (elemVal !== "%") {
         isParenthesized(parenthesized, elemVal, currVals);
@@ -259,19 +261,20 @@ const handleDash = function (currVals) {
       updateValues(currVals, "(-");
       break;
 
-    case previousVal.match(regexMatchNegNum) !== null:
-      let matched = previousVal.match(regexMatchNegNum)[0];
-      matched = matched.replace(/\(?-/, "");
-      const replacee = previousVal.replace(regexMatchNegNum, `${matched}`);
-      console.log(matched);
-      updateValues(currVals, replacee, "replace");
-      break;
-
     case previousVal.match(regexForEndNum) !== null:
       const matcher = previousVal.match(regexForEndNum)[0];
       const replacer = previousVal.replace(regexForEndNum, `(-${matcher}`);
       updateValues(currVals, replacer, "replace");
       break;
+
+    case previousVal.match(regexMatchNegNum) !== null:
+      let matched = previousVal.match(regexMatchNegNum)[0];
+      matched = matched.replace(/\(?-/, "");
+      const replacee = previousVal.replace(regexMatchNegNum, `${matched}`);
+      // console.log(matched);
+      updateValues(currVals, replacee, "replace");
+      break;
+
     case lastVal === ")" || lastVal === "%":
       isParenthesized(parenthesized, ["*", "(-"], currVals);
       break;
@@ -302,7 +305,7 @@ const collectLiterals = function (e, key, switchVal) {
   curLen = screenText.length;
   previousVal = screenText[curLen - 1];
 
-  //This boolean value is used to check if the curret operation is in parentheses.
+  //This boolean value is used to check if the current operation is in parentheses.
   parenthesized =
     previousVal &&
     previousVal[0] === "(" &&
@@ -378,7 +381,7 @@ const handleKeyPressFn = function (e) {
       backspaceFn();
       break;
 
-    case keyPressed === "Enter":
+    case keyPressed === "Enter" || keyPressed === "=":
       collectLiterals(undefined, keyPressed, "equals");
       break;
     default:
@@ -387,25 +390,26 @@ const handleKeyPressFn = function (e) {
 };
 
 //This function returns the calculated value
-function calc(expr, final = false) {
-  if (expr === "") return "";
-  let exprFilter = expr;
+function calc(expression, final = false) {
+  if (expression === "") return "";
+  let expressionFilter = expression;
 
   // This block replaces instances of percentage values with their numeric equivalents using regex
-  if (exprFilter.includes("%")) {
+  if (expressionFilter.includes("%")) {
     const regexPercent = /([0-9.]+%)/g;
-    const matchesPercent = expr.matchAll(regexPercent);
+    const matchesPercent = expression.matchAll(regexPercent);
 
     for (const [el, ...ot] of matchesPercent) {
       let numericPart = Number.parseFloat(el) / 100;
-      exprFilter = exprFilter.replace(`${el}`, `${numericPart}`);
+      expressionFilter = expressionFilter.replace(`${el}`, `${numericPart}`);
     }
   }
 
   //Replaces any percentage symbol left
-  // exprFilter = exprFilter.replaceAll("%", "/100");
+  // expressionFilter = expressionFilter.replaceAll("%", "/100");
 
-  exprFilter = exprFilter.replace(/%/g, "/100");
+  expressionFilter = expressionFilter.replace(/%/g, "/100");
+  console.log(expressionFilter);
 
   //Use a try-catch block to catch any unwanted errrors
   try {
@@ -413,7 +417,7 @@ function calc(expr, final = false) {
     let value = Function(`
     "use strict";
 
-    return (${exprFilter})
+    return (${expressionFilter})
 
     `)();
     if (value === Infinity || value === -Infinity) {
@@ -423,7 +427,7 @@ function calc(expr, final = false) {
     return value;
   } catch (error) {
     // console.log(error.name);
-    if (final && exprFilter !== "") showError(error.name);
+    if (final && expressionFilter !== "") showError(error.name);
     return "";
   }
 }
